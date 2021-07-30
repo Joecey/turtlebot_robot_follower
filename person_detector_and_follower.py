@@ -17,7 +17,7 @@ model.setInputSwapRB(True)
 
 # create class lables
 classLabels = [] # empty list
-file_name = 'Labels.txt'
+file_name = 'labels.txt'
 with open(file_name, 'rt') as fpt:
     classLabels = fpt.read().rstrip('\n').split('\n')
 
