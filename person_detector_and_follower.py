@@ -17,7 +17,7 @@ model.setInputSwapRB(True)
 
 # create class lables
 classLabels = [] # empty list
-file_name = 'Labels.txt'
+file_name = 'labels.txt'
 with open(file_name, 'rt') as fpt:
     classLabels = fpt.read().rstrip('\n').split('\n')
 
@@ -29,6 +29,9 @@ font = cv2.FONT_HERSHEY_PLAIN
 
 cam = cv2.VideoCapture(0)
 
+# Global command for robot
+string_command = ""
+
 while True:
     # cam is 640x480 px
     check, frame = cam.read()
@@ -39,28 +42,45 @@ while True:
     # print(ClassIndex)
 
     if (len(ClassIndex)!=0):
-        for ClassInd, conf, boxes in zip(ClassIndex.flatten(), confidence.flatten(), bbox):
+        for ClassInd, conf in zip(ClassIndex.flatten(), confidence.flatten()):
+
+            # get only first box in bbox
+            followBox = bbox[0]
+
             if(ClassInd<=len(classLabels)):
                 if(classLabels[ClassInd-1] == 'person'):
-                    cv2.rectangle(frame, boxes, (255,0,0), 2)
-                    cv2.putText(frame, classLabels[ClassInd-1], (boxes[0]+10,boxes[1]+40), font, fontScale = font_scale, color=(0,255,0))
+                    cv2.rectangle(frame, followBox , (255,0,0), 2)
+                    cv2.putText(frame, classLabels[ClassInd-1], (followBox [0]+10,followBox [1]+40), font, fontScale = font_scale, color=(0,255,0))
 
                     # print centre position of bounding box
-                    centre_width = boxes[0] + round(boxes[2]/2)
+                    centre_width = followBox [0] + round(followBox [2]/2)
                     # print(boxes)
                     # print(centre_width)
-                    # testing branch changes
-
                     # draw circle for box
                     cv2.circle(frame, (centre_width, 240), 3, (0, 255, 0), 3)
+
+
 
 
     # Draw centre circle on frame
     cv2.circle(frame, (320, 240), 3, (0,0,255), 3)
 
+    # run function to find difference between bbox centre and cam centre
+    # cam is 640px wide
+    # turn left if less than 320, turn right if greater than 340
+    threshold_modifier = 25
+    if centre_width <= 320 - threshold_modifier:
+        string_command = "rotating left..."
+    elif centre_width >= 320 + threshold_modifier:
+        string_command = "rotating right..."
+    else:
+        string_command = "moving forward..."
+
+    # print string_command i.e. robot command
+    print(string_command)
 
     cv2.imshow("Webcam", frame)
-    cv2.waitKey(1)
+    cv2.waitKey(5) # delay in ms, might need to change this?
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
