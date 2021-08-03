@@ -2,7 +2,7 @@
 import cv2
 import pyrealsense2
 from realsense_depth import *
-print("epic")
+print("cool")
 
 # intialize camera intel realsense
 dc = DepthCamera()
