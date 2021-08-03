@@ -83,8 +83,8 @@ class rotate():
         # webcam capture
         cam = cv2.VideoCapture(0)
 
-        # realsense
-        # dc = DepthCamera()
+        # change this to the realsense camera
+        dc = DepthCamera()
 
         # Global command for robot
         string_command = ""
@@ -92,13 +92,11 @@ class rotate():
         # as long as you haven't ctrl + c keeping doing...
         while not rospy.is_shutdown():
             # cam is 640x480 px
-            check, frame = cam.read()
+            ret, depth_frame, colour_frame = dc.get_frame()
 
-            # realsense
-            # ret, depth_frame, frame = dc.get_frame()
 
             # Actual object detection aspect
-            ClassIndex, confidence, bbox = model.detect(frame, confThreshold=0.55)
+            ClassIndex, confidence, bbox = model.detect(colour_frame, confThreshold=0.55)
             # print(ClassIndex)
 
             if (len(ClassIndex) != 0):
@@ -109,41 +107,56 @@ class rotate():
 
                     if (ClassInd <= len(classLabels)):
                         if (classLabels[ClassInd - 1] == 'person'):
-                            cv2.rectangle(frame, followBox, (255, 0, 0), 2)
-                            cv2.putText(frame, classLabels[ClassInd - 1], (followBox[0] + 10, followBox[1] + 40), font,
+                            cv2.rectangle(colour_frame, followBox, (255, 0, 0), 2)
+                            cv2.putText(colour_frame, classLabels[ClassInd - 1], (followBox[0] + 10, followBox[1] + 40), font,
                                         fontScale=font_scale, color=(0, 255, 0))
 
                             # print centre position of bounding box
                             centre_width = followBox[0] + round(followBox[2] / 2)
-                            # print(boxes)
-                            # print(centre_width)
+
                             # draw circle for box
-                            cv2.circle(frame, (centre_width, 240), 3, (0, 255, 0), 3)
+                            cv2.circle(colour_frame, (centre_width, 240), 3, (0, 255, 0), 3)
+                            box = followBox
+                            point = (round((box[2] / 2) + box[0]), round((box[3] / 2) + box[1]))
+                            # print(point)
+                            cv2.circle(colour_frame, (round((box[2] / 2) + box[0]), round((box[3] / 2) + box[1])), 3,
+                                       (0, 255, 255), 3)
+                            # depth perception is measured at the yellow point
+
+                            distance = depth_frame[point[1], point[0]]  # when working with arrays, we put y coordinate before x coordinate
+                            print(distance)
 
             # Draw centre circle on frame
-            cv2.circle(frame, (320, 240), 3, (0, 0, 255), 3)
+            cv2.circle(colour_frame, (320, 240), 3, (0, 0, 255), 3)
 
             # run function to find difference between bbox centre and cam centre
             # cam is 640px wide
             # turn left if less than 320, turn right if greater than 340
             threshold_modifier = 80
-            if centre_width <= 320 - threshold_modifier:
-                string_command = "rotating left..."
-                self.cmd_vel.publish(move_cmd_left)
+            distance_thres = 600
+            if distance <= distance_thres:
+                string_command = "stop..."
+                self.cmd_vel.publish(move_cmd_stop)
                 r.sleep()
 
-            elif centre_width >= 320 + threshold_modifier:
-                string_command = "rotating right..."
-                self.cmd_vel.publish(move_cmd_right)
-                r.sleep()
+            elif distance > distance_thres:
+                if centre_width <= 320 - threshold_modifier:
+                    string_command = "rotating left..."
+                    self.cmd_vel.publish(move_cmd_left)
+                    r.sleep()
 
-            else:
-                string_command = "forward"
-                self.cmd_vel.publish(move_cmd_forward)
-                r.sleep()
+                elif centre_width >= 320 + threshold_modifier:
+                    string_command = "rotating right..."
+                    self.cmd_vel.publish(move_cmd_right)
+                    r.sleep()
+
+                else:
+                    string_command = "forward"
+                    self.cmd_vel.publish(move_cmd_forward)
+                    r.sleep()
 
             print(string_command)
-            cv2.imshow("Webcam", frame)
+            cv2.imshow("Webcam", colour_frame)
             cv2.waitKey(10)  # delay in ms, might need to change this?
 
 
