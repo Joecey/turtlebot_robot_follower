@@ -1,0 +1,2 @@
+- use python3 to run object detector code and rospy
+- everything should work together using python3
