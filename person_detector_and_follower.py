@@ -3,6 +3,8 @@
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
+import pyrealsense2
+from realsense_depth import *
 
 # deep learning config file
 config_file = 'ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt'
@@ -27,15 +29,21 @@ print(classLabels)
 font_scale = 2
 font = cv2.FONT_HERSHEY_PLAIN
 
-cam = cv2.VideoCapture(0)
+# webcam capture
+# cam = cv2.VideoCapture(0)
+
+# realsense
+dc = DepthCamera()
 
 # Global command for robot
 string_command = ""
 
 while True:
     # cam is 640x480 px
-    check, frame = cam.read()
+    # check, frame = cam.read()
 
+    # realsense
+    ret, depth_frame, frame = dc.get_frame()
 
     # Actual object detection aspect
     ClassIndex, confidence, bbox = model.detect(frame, confThreshold=0.55)
@@ -68,7 +76,7 @@ while True:
     # run function to find difference between bbox centre and cam centre
     # cam is 640px wide
     # turn left if less than 320, turn right if greater than 340
-    threshold_modifier = 25
+    threshold_modifier = 40
     if centre_width <= 320 - threshold_modifier:
         string_command = "rotating left..."
     elif centre_width >= 320 + threshold_modifier:
