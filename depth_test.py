@@ -2,7 +2,7 @@
 import cv2
 import pyrealsense2
 from realsense_depth import *
-print("epic")
+print("cool")
 
 # intialize camera intel realsense
 dc = DepthCamera()
@@ -13,7 +13,7 @@ while True:
     # show distnace
     point = (400, 300)
     cv2.circle(colour_frame, point, 4, (0, 0, 255))
-    distance = depth_frame[point[1], point[0]]
+    distance = depth_frame[point[1], point[0]]  #when working with arrays, we put y coordinate before x coordinate
     print(distance)
 
     cv2.imshow("colour", colour_frame)
