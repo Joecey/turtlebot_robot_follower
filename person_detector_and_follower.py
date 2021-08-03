@@ -30,20 +30,20 @@ font_scale = 2
 font = cv2.FONT_HERSHEY_PLAIN
 
 # webcam capture
-# cam = cv2.VideoCapture(0)
+cam = cv2.VideoCapture(0)
 
 # realsense
-dc = DepthCamera()
+# dc = DepthCamera()
 
 # Global command for robot
 string_command = ""
 
 while True:
     # cam is 640x480 px
-    # check, frame = cam.read()
+    check, frame = cam.read()
 
     # realsense
-    ret, depth_frame, frame = dc.get_frame()
+    # ret, depth_frame, frame = dc.get_frame()
 
     # Actual object detection aspect
     ClassIndex, confidence, bbox = model.detect(frame, confThreshold=0.55)
