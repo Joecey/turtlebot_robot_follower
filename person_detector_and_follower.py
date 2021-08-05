@@ -65,7 +65,7 @@ while True:
                     cv2.putText(colour_frame, classLabels[ClassInd-1], (followBox [0]+10,followBox [1]+40), font, fontScale = font_scale, color=(0,255,0))
 
                     # print centre position of bounding box
-                    centre_width = followBox [0] + round(followBox [2]/2)
+                    centre_width = followBox[0] + round(followBox[2] / 2)
                     # print(followBox)
                     # print(centre_width)
                     # draw circle for box
@@ -89,15 +89,15 @@ while True:
     # cam is 640px wide
     # turn left if less than 320, turn right if greater than 340
     threshold_modifier = 40
-    if centre_width <= 320 - threshold_modifier:
-       # string_command = "rotating left..."
-        pass
-    elif centre_width >= 320 + threshold_modifier:
-       # string_command = "rotating right..."
-        pass
-    else:
-       # string_command = "moving forward..."
-        pass
+    # if centre_width <= 320 - threshold_modifier:
+    #    # string_command = "rotating left..."
+    #     pass
+    # elif centre_width >= 320 + threshold_modifier:
+    #    # string_command = "rotating right..."
+    #     pass
+    # else:
+    #    # string_command = "moving forward..."
+    #     pass
 
     # print string_command i.e. robot command
     print(string_command)
