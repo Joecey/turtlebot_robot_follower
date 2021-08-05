@@ -1,2 +1,3 @@
 - use python3 to run object detector code and rospy
 - everything should work together using python3
+- everytime you open up a new terminal, run source devel/setup.bash in catkin workspace
