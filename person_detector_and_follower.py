@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # File to act as person detector and follower (prototype atm)
 # Using python and opencv
 import cv2
