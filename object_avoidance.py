@@ -1,14 +1,10 @@
-#!/usr/bin/env python3
-
-# File to act as person detector and follower (prototype atm)
+# File to act as object detection and avoidance
 # Using python and opencv
 import cv2
 import pyrealsense2
 from realsense_depth import *
 import matplotlib.pyplot as plt
 import numpy as np
-import pyrealsense2
-from realsense_depth import *
 
 # deep learning config file
 config_file = 'ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt'
@@ -34,20 +30,17 @@ font_scale = 2
 font = cv2.FONT_HERSHEY_PLAIN
 
 #realsense camera
-dc = DepthCamera()
-
-# realsense
-# dc = DepthCamera()
+cam = cv2.VideoCapture(0)
 
 # Global command for robot
 string_command = ""
 
 while True:
-    # cam is 640x480 px
-    ret, depth_frame, colour_frame = dc.get_frame()
+    check, colour_frame = cam.read()
 
-    # realsense
-    # ret, depth_frame, frame = dc.get_frame()
+    # cam is 640x480 px
+    #ret, depth_frame, colour_frame = cam.frame()
+
 
     # Actual object detection aspect
     ClassIndex, confidence, bbox = model.detect(colour_frame, confThreshold=0.55)
@@ -60,26 +53,16 @@ while True:
             followBox = bbox[0]
 
             if(ClassInd<=len(classLabels)):
-                if(classLabels[ClassInd-1] == 'person'):
+                if(classLabels[ClassInd-1] == 'person' or classLabels[ClassInd-1] == 'cell phone' or classLabels[ClassInd-1] == 'bench' or classLabels[ClassInd-1] == 'chair' or classLabels[ClassInd-1] == 'dog' or classLabels[ClassInd-1] == 'hat' or classLabels[ClassInd-1] == 'backpack' or classLabels[ClassInd-1] == 'umbrella' or classLabels[ClassInd-1] == 'eye glasses' or classLabels[ClassInd-1] == 'shoe' or classLabels[ClassInd-1] == 'handbag' or classLabels[ClassInd-1] == 'suitcase'):
                     cv2.rectangle(colour_frame, followBox , (255,0,0), 2)
                     cv2.putText(colour_frame, classLabels[ClassInd-1], (followBox [0]+10,followBox [1]+40), font, fontScale = font_scale, color=(0,255,0))
 
                     # print centre position of bounding box
-                    centre_width = followBox[0] + round(followBox[2] / 2)
+                    centre_width = followBox [0] + round(followBox [2]/2)
                     # print(followBox)
                     # print(centre_width)
                     # draw circle for box
                     cv2.circle(colour_frame, (centre_width, 240), 3, (0, 255, 0), 3) # red circle in centre
-
-                    box = followBox
-                    point = (round((box[2] / 2) + box[0]), round((box[3] / 2) + box[1]))
-                    # print(point)
-                    cv2.circle(colour_frame, (round((box[2] / 2) + box[0]), round((box[3] / 2) + box[1])), 3, (0, 255, 255), 3)
-                    # depth perception is measured at the yellow point
-
-                    distance = depth_frame[point[1], point[0]]  # when working with arrays, we put y coordinate before x coordinate
-                    print(distance)
-
 
 
     # Draw centre circle on frame
@@ -88,16 +71,16 @@ while True:
     # run function to find difference between bbox centre and cam centre
     # cam is 640px wide
     # turn left if less than 320, turn right if greater than 340
-    threshold_modifier = 40
-    # if centre_width <= 320 - threshold_modifier:
-    #    # string_command = "rotating left..."
-    #     pass
-    # elif centre_width >= 320 + threshold_modifier:
-    #    # string_command = "rotating right..."
-    #     pass
-    # else:
-    #    # string_command = "moving forward..."
-    #     pass
+    threshold_modifier = 25
+    if centre_width <= 320 - threshold_modifier:
+       # string_command = "rotating left..."
+        pass
+    elif centre_width >= 320 + threshold_modifier:
+       # string_command = "rotating right..."
+        pass
+    else:
+       # string_command = "moving forward..."
+        pass
 
     # print string_command i.e. robot command
     print(string_command)
@@ -108,5 +91,5 @@ while True:
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
-#dc.release()
-#cv2.destroyWindow()
+cam.release()
+cv2.destroyWindow()
