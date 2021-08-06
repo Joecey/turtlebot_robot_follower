@@ -56,6 +56,7 @@ move_cmd_forward.angular.z = 0
 
 ###  person detector initialization ###
 # deep learning config file
+# USE ABSOLUTE PATH HERE WHEN CREATE A LAUNCH FILE
 config_file = 'ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt'
 frozen_model = 'ssd_mobilenet_v3_large_coco_2020_01_14/frozen_inference_graph.pb'
 
@@ -68,6 +69,7 @@ model.setInputSwapRB(True)
 
 # create class lables
 classLabels = []  # empty list
+# USE ABSOLUTE PATH HERE 
 file_name = 'labels.txt'
 with open(file_name, 'rt') as fpt:
     classLabels = fpt.read().rstrip('\n').split('\n')
