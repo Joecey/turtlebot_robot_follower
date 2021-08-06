@@ -33,18 +33,18 @@ print(classLabels)
 font_scale = 2
 font = cv2.FONT_HERSHEY_PLAIN
 
-#realsense camera
-dc = DepthCamera()
-
-# realsense
-# dc = DepthCamera()
+#webcam
+cam = cv2.VideoCapture(0)
 
 # Global command for robot
 string_command = ""
 
 while True:
+
+    check, colour_frame = cam.read()
+
     # cam is 640x480 px
-    ret, depth_frame, colour_frame = dc.get_frame()
+    #ret, depth_frame, colour_frame = cam.read()
 
     # realsense
     # ret, depth_frame, frame = dc.get_frame()
@@ -71,14 +71,14 @@ while True:
                     # draw circle for box
                     cv2.circle(colour_frame, (centre_width, 240), 3, (0, 255, 0), 3) # red circle in centre
 
-                    box = followBox
-                    point = (round((box[2] / 2) + box[0]), round((box[3] / 2) + box[1]))
+                   # box = followBox
+                   # point = (round((box[2] / 2) + box[0]), round((box[3] / 2) + box[1]))
                     # print(point)
-                    cv2.circle(colour_frame, (round((box[2] / 2) + box[0]), round((box[3] / 2) + box[1])), 3, (0, 255, 255), 3)
+                   # cv2.circle(colour_frame, (round((box[2] / 2) + box[0]), round((box[3] / 2) + box[1])), 3, (0, 255, 255), 3)
                     # depth perception is measured at the yellow point
 
-                    distance = depth_frame[point[1], point[0]]  # when working with arrays, we put y coordinate before x coordinate
-                    print(distance)
+                   # distance = depth_frame[point[1], point[0]]  # when working with arrays, we put y coordinate before x coordinate
+                   # print(distance)
 
 
 
@@ -108,5 +108,5 @@ while True:
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
-#dc.release()
-#cv2.destroyWindow()
+cam.release()
+cv2.destroyWindow()

@@ -30,16 +30,16 @@ font_scale = 2
 font = cv2.FONT_HERSHEY_PLAIN
 
 #realsense camera
-cam = cv2.VideoCapture(0)
+dc = DepthCamera()
 
 # Global command for robot
 string_command = ""
 
 while True:
-    check, colour_frame = cam.read()
+    #check, colour_frame = cam.read()
 
     # cam is 640x480 px
-    #ret, depth_frame, colour_frame = cam.frame()
+    ret, depth_frame, colour_frame = dc.get_frame()
 
 
     # Actual object detection aspect
@@ -50,20 +50,28 @@ while True:
         for ClassInd, conf in zip(ClassIndex.flatten(), confidence.flatten()):
 
             # get only first box in bbox
-            followBox = bbox[0]
+            for followBox in bbox:
 
-            if(ClassInd<=len(classLabels)):
-                if(classLabels[ClassInd-1] == 'person' or classLabels[ClassInd-1] == 'cell phone' or classLabels[ClassInd-1] == 'bench' or classLabels[ClassInd-1] == 'chair' or classLabels[ClassInd-1] == 'dog' or classLabels[ClassInd-1] == 'hat' or classLabels[ClassInd-1] == 'backpack' or classLabels[ClassInd-1] == 'umbrella' or classLabels[ClassInd-1] == 'eye glasses' or classLabels[ClassInd-1] == 'shoe' or classLabels[ClassInd-1] == 'handbag' or classLabels[ClassInd-1] == 'suitcase'):
-                    cv2.rectangle(colour_frame, followBox , (255,0,0), 2)
-                    cv2.putText(colour_frame, classLabels[ClassInd-1], (followBox [0]+10,followBox [1]+40), font, fontScale = font_scale, color=(0,255,0))
+                if(ClassInd<=len(classLabels)):
+                    if(classLabels[ClassInd-1] == 'person' or classLabels[ClassInd-1] == 'cell phone' or classLabels[ClassInd-1] == 'bench' or classLabels[ClassInd-1] == 'chair' or classLabels[ClassInd-1] == 'dog' or classLabels[ClassInd-1] == 'hat' or classLabels[ClassInd-1] == 'backpack' or classLabels[ClassInd-1] == 'umbrella' or classLabels[ClassInd-1] == 'eye glasses' or classLabels[ClassInd-1] == 'shoe' or classLabels[ClassInd-1] == 'handbag' or classLabels[ClassInd-1] == 'suitcase'):
+                        cv2.rectangle(colour_frame, followBox, (255, 0, 0), 2)
+                        cv2.putText(colour_frame, classLabels[ClassInd - 1], (followBox[0] + 10, followBox[1] + 40),font, fontScale=font_scale, color=(0, 255, 0))
 
-                    # print centre position of bounding box
-                    centre_width = followBox [0] + round(followBox [2]/2)
-                    # print(followBox)
-                    # print(centre_width)
-                    # draw circle for box
-                    cv2.circle(colour_frame, (centre_width, 240), 3, (0, 255, 0), 3) # red circle in centre
+                        # print centre position of bounding box
+                        centre_width = followBox[0] + round(followBox[2] / 2)
+                        # print(followBox)
+                        # print(centre_width)
+                        # draw circle for box
+                        cv2.circle(colour_frame, (centre_width, 240), 3, (0, 255, 0), 3)  # red circle in centre
 
+                        box = followBox
+                        point = (round((box[2] / 2) + box[0]), round((box[3] / 2) + box[1]))
+                        # print(point)
+                        cv2.circle(colour_frame, (round((box[2] / 2) + box[0]), round((box[3] / 2) + box[1])), 3,(0, 255, 255), 3)
+                        # depth perception is measured at the yellow point
+
+                        distance = depth_frame[point[1], point[0]]  # when working with arrays, we put y coordinate before x coordinate
+                        print(distance)
 
     # Draw centre circle on frame
     cv2.circle(colour_frame, (320, 240), 3, (0,0,255), 3)
@@ -91,5 +99,5 @@ while True:
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
-cam.release()
-cv2.destroyWindow()
+#cam.release()
+#cv2.destroyWindow()
