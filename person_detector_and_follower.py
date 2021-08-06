@@ -29,7 +29,7 @@ print(classLabels)
 font_scale = 2
 font = cv2.FONT_HERSHEY_PLAIN
 
-#change this to the realsense camera
+#realsense camera
 dc = DepthCamera()
 
 # Global command for robot
@@ -67,7 +67,7 @@ while True:
                     # print(point)
                     cv2.circle(colour_frame, (round((box[2] / 2) + box[0]), round((box[3] / 2) + box[1])), 3, (0, 255, 255), 3)
                     # depth perception is measured at the yellow point
-                    
+
                     distance = depth_frame[point[1], point[0]]  # when working with arrays, we put y coordinate before x coordinate
                     print(distance)
 
