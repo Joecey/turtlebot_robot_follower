@@ -21,7 +21,7 @@ class rotate():
     def __init__(self):
         #### Intialization for rospy ####
         rospy.init_node('rotate', anonymous=False)
-
+        print("node made")
         # tell user how to stop TurtleBot
         rospy.loginfo("To stop TurtleBot CTRL + C")
 
@@ -81,7 +81,7 @@ class rotate():
         font = cv2.FONT_HERSHEY_PLAIN
 
         # webcam capture
-        cam = cv2.VideoCapture(0)
+        # cam = cv2.VideoCapture(0)
 
         # change this to the realsense camera
         dc = DepthCamera()
