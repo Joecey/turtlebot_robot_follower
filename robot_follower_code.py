@@ -10,6 +10,7 @@
 import rospy
 from geometry_msgs.msg import Twist
 import cv2
+import pyttsx3
 import matplotlib.pyplot as plt
 import numpy as np
 import pyrealsense2
@@ -82,6 +83,11 @@ font = cv2.FONT_HERSHEY_PLAIN
 
 # webcam capture
 # cam = cv2.VideoCapture(0)
+
+# setup python text to speech
+engine = pyttsx3.init()
+engine.say('My name is TurtleBot2. I am ready to start mapping')
+engine.runAndWait()
 
 # change this to the realsense camera
 dc = DepthCamera()
