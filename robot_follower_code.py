@@ -174,7 +174,7 @@ while not rospy.is_shutdown():
     cv2.circle(colour_frame, (320, 240), 3, (0, 0, 255), 3)
 
     print(string_command)
-    cv2.imshow("Webcam", colour_frame)
+    cv2.imshow("realsense_camera", colour_frame)
     cv2.waitKey(10)  # delay in ms, might need to change this?
 
 
