@@ -10,6 +10,7 @@
 import rospy
 from geometry_msgs.msg import Twist
 import cv2
+import pyttsx3
 import matplotlib.pyplot as plt
 import numpy as np
 import pyrealsense2
@@ -57,8 +58,8 @@ move_cmd_forward.angular.z = 0
 ###  person detector initialization ###
 # deep learning config file
 # USE ABSOLUTE PATH HERE WHEN CREATE A LAUNCH FILE
-config_file = 'ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt'
-frozen_model = 'ssd_mobilenet_v3_large_coco_2020_01_14/frozen_inference_graph.pb'
+config_file = '/home/joel/rail_perception_ws/src/depth-detection-follow/ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt'
+frozen_model = '/home/joel/rail_perception_ws/src/depth-detection-follow/ssd_mobilenet_v3_large_coco_2020_01_14/frozen_inference_graph.pb'
 
 model = cv2.dnn_DetectionModel(frozen_model, config_file)
 
@@ -70,7 +71,7 @@ model.setInputSwapRB(True)
 # create class lables
 classLabels = []  # empty list
 # USE ABSOLUTE PATH HERE 
-file_name = 'labels.txt'
+file_name = '/home/joel/rail_perception_ws/src/depth-detection-follow/labels.txt'
 with open(file_name, 'rt') as fpt:
     classLabels = fpt.read().rstrip('\n').split('\n')
 
@@ -82,6 +83,11 @@ font = cv2.FONT_HERSHEY_PLAIN
 
 # webcam capture
 # cam = cv2.VideoCapture(0)
+
+# setup python text to speech
+engine = pyttsx3.init()
+engine.say('My name is TurtleBot2. I am ready to start mapping')
+engine.runAndWait()
 
 # change this to the realsense camera
 dc = DepthCamera()
@@ -132,9 +138,21 @@ while not rospy.is_shutdown():
                     threshold_modifier = 80
                     distance_thres = 600
                     if distance <= distance_thres:
-                        string_command = "stop..."
-                        cmd_vel.publish(move_cmd_stop)
-                        r.sleep()
+
+                        if centre_width <= 320 - threshold_modifier:
+                            string_command = "rotating left..."
+                            cmd_vel.publish(move_cmd_left)
+                            r.sleep()
+
+                        elif centre_width >= 320 + threshold_modifier:
+                            string_command = "rotating right..."
+                            cmd_vel.publish(move_cmd_right)
+                            r.sleep()
+
+                        else:
+                            string_command = "stop..."
+                            cmd_vel.publish(move_cmd_stop)
+                            r.sleep()
 
                     elif distance > distance_thres:
                         if centre_width <= 320 - threshold_modifier:
@@ -156,7 +174,7 @@ while not rospy.is_shutdown():
     cv2.circle(colour_frame, (320, 240), 3, (0, 0, 255), 3)
 
     print(string_command)
-    cv2.imshow("Webcam", colour_frame)
+    cv2.imshow("realsense_camera", colour_frame)
     cv2.waitKey(10)  # delay in ms, might need to change this?
 
 
