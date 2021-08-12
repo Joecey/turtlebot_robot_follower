@@ -44,7 +44,7 @@ while True:
     check, colour_frame = cam.read()
 
     # cam is 640x480 px
-    #ret, depth_frame, colour_frame = cam.read()
+    #ret, depth_frame, colour_frame = dc.get_frame()
 
     # realsense
     # ret, depth_frame, frame = dc.get_frame()
