@@ -34,7 +34,7 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
 
         # show various landmarks
         #print(results.face_landmarks)
-        #print(results.pose_landmarks)
+        print(results.right_hand_landmarks)
 
         # EXAMPLE, face, pose, left_hand, right_hand
 
