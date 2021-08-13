@@ -1,4 +1,5 @@
 - use python3 to run object detector code and rospy
 - everything should work together using python3
 - Joe - "I created a separate folder with a copy of this repo in order to use launch files with it"
+- test test test test
 
