@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # This code is a testing ground for mediapipe implementation
 # in conjuction with OpenCV
 
